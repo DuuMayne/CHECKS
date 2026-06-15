@@ -9,10 +9,10 @@ Usage:
     checks validate             — Validate your checks.yml config
     checks init                 — Create a starter checks.yml in the current directory
 """
-import json
+
 import sys
 
-from .config import build_catalogs, find_config_path, load_config, validate_config
+from .config import find_config_path, load_config, validate_config
 from .connectors import list_connectors
 from .evaluators import list_evaluators
 from .models import Status
@@ -62,9 +62,9 @@ def _cmd_run(args: list[str]):
     else:
         keys_to_run = list(checks.keys())
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"  Running {len(keys_to_run)} check(s)")
-    print(f"{'='*60}\n")
+    print(f"{'=' * 60}\n")
 
     results = []
     for key in keys_to_run:
@@ -87,9 +87,9 @@ def _cmd_run(args: list[str]):
     failed = sum(1 for r in results if r.status == Status.FAIL)
     errors = sum(1 for r in results if r.status == Status.ERROR)
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"  Results: {passed} passed, {failed} failed, {errors} errors")
-    print(f"{'='*60}\n")
+    print(f"{'=' * 60}\n")
 
     sys.exit(0 if failed == 0 and errors == 0 else 1)
 
@@ -139,12 +139,12 @@ def _cmd_validate():
 
 
 def _cmd_init():
-    from pathlib import Path
     import shutil
+    from pathlib import Path
 
     target = Path("checks.yml")
     if target.exists():
-        print(f"checks.yml already exists. Delete it first or edit it directly.")
+        print("checks.yml already exists. Delete it first or edit it directly.")
         sys.exit(1)
 
     example = Path(__file__).parent.parent / "checks.example.yml"
@@ -166,8 +166,8 @@ checks:
       critical_repos: []
 """)
 
-    print(f"Created checks.yml — edit it with your environment's details.")
-    print(f"Then run: checks validate && checks run")
+    print("Created checks.yml — edit it with your environment's details.")
+    print("Then run: checks validate && checks run")
 
 
 if __name__ == "__main__":

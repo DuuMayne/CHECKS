@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 """GitHub connector — fetches branch protection and security settings."""
 import os
 
@@ -16,12 +17,24 @@ class GitHubConnector(ConnectorBase):
             {
                 "full_name": "acme/api-service",
                 "default_branch": "main",
-                "branch_protection": {"enabled": True, "required_reviews": 2, "enforce_admins": True, "dismiss_stale_reviews": True, "required_status_checks": True},
+                "branch_protection": {
+                    "enabled": True,
+                    "required_reviews": 2,
+                    "enforce_admins": True,
+                    "dismiss_stale_reviews": True,
+                    "required_status_checks": True,
+                },
             },
             {
                 "full_name": "acme/frontend",
                 "default_branch": "main",
-                "branch_protection": {"enabled": True, "required_reviews": 1, "enforce_admins": False, "dismiss_stale_reviews": True, "required_status_checks": True},
+                "branch_protection": {
+                    "enabled": True,
+                    "required_reviews": 1,
+                    "enforce_admins": False,
+                    "dismiss_stale_reviews": True,
+                    "required_status_checks": True,
+                },
             },
             {
                 "full_name": "acme/infra-config",
@@ -76,12 +89,18 @@ class GitHubConnector(ConnectorBase):
             repo_resp.raise_for_status()
             default_branch = repo_resp.json().get("default_branch", "main")
         except Exception as e:
-            return {"full_name": repo_full_name, "default_branch": "unknown", "branch_protection": None, "error": str(e)}
+            return {
+                "full_name": repo_full_name,
+                "default_branch": "unknown",
+                "branch_protection": None,
+                "error": str(e),
+            }
 
         try:
             prot_resp = httpx.get(
                 f"{self.BASE_URL}/repos/{repo_full_name}/branches/{default_branch}/protection",
-                headers=self.headers, timeout=10,
+                headers=self.headers,
+                timeout=10,
             )
             if prot_resp.status_code == 404:
                 return {"full_name": repo_full_name, "default_branch": default_branch, "branch_protection": None}
@@ -102,7 +121,12 @@ class GitHubConnector(ConnectorBase):
                 },
             }
         except Exception as e:
-            return {"full_name": repo_full_name, "default_branch": default_branch, "branch_protection": None, "error": str(e)}
+            return {
+                "full_name": repo_full_name,
+                "default_branch": default_branch,
+                "branch_protection": None,
+                "error": str(e),
+            }
 
     @staticmethod
     def _next_link(link_header: str | None) -> str | None:

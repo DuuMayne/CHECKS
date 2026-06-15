@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 """Okta connector — fetches user and MFA enrollment data."""
 import os
 
@@ -13,11 +14,46 @@ class OktaConnector(ConnectorBase):
     required_env = ["OKTA_DOMAIN", "OKTA_API_TOKEN"]
     mock_data = {
         "users": [
-            {"id": "u1", "email": "alice@company.com", "status": "ACTIVE", "mfa_enrolled": True, "mfa_factors": ["okta_verify"], "last_login": "2026-06-10T10:00:00Z"},
-            {"id": "u2", "email": "bob@company.com", "status": "ACTIVE", "mfa_enrolled": True, "mfa_factors": ["okta_verify", "sms"], "last_login": "2026-06-12T09:00:00Z"},
-            {"id": "u3", "email": "charlie@company.com", "status": "ACTIVE", "mfa_enrolled": False, "mfa_factors": [], "last_login": "2026-05-01T09:00:00Z"},
-            {"id": "u4", "email": "service-account@company.com", "status": "ACTIVE", "mfa_enrolled": False, "mfa_factors": [], "last_login": None},
-            {"id": "u5", "email": "former@company.com", "status": "DEPROVISIONED", "mfa_enrolled": False, "mfa_factors": [], "last_login": "2026-01-15T08:00:00Z"},
+            {
+                "id": "u1",
+                "email": "alice@company.com",
+                "status": "ACTIVE",
+                "mfa_enrolled": True,
+                "mfa_factors": ["okta_verify"],
+                "last_login": "2026-06-10T10:00:00Z",
+            },
+            {
+                "id": "u2",
+                "email": "bob@company.com",
+                "status": "ACTIVE",
+                "mfa_enrolled": True,
+                "mfa_factors": ["okta_verify", "sms"],
+                "last_login": "2026-06-12T09:00:00Z",
+            },
+            {
+                "id": "u3",
+                "email": "charlie@company.com",
+                "status": "ACTIVE",
+                "mfa_enrolled": False,
+                "mfa_factors": [],
+                "last_login": "2026-05-01T09:00:00Z",
+            },
+            {
+                "id": "u4",
+                "email": "service-account@company.com",
+                "status": "ACTIVE",
+                "mfa_enrolled": False,
+                "mfa_factors": [],
+                "last_login": None,
+            },
+            {
+                "id": "u5",
+                "email": "former@company.com",
+                "status": "DEPROVISIONED",
+                "mfa_enrolled": False,
+                "mfa_factors": [],
+                "last_login": "2026-01-15T08:00:00Z",
+            },
         ]
     }
 
@@ -55,12 +91,14 @@ class OktaConnector(ConnectorBase):
             resp = httpx.get(url, headers=self.headers, timeout=30)
             resp.raise_for_status()
             for u in resp.json():
-                users.append({
-                    "id": u["id"],
-                    "email": u.get("profile", {}).get("email", ""),
-                    "status": u.get("status", "UNKNOWN"),
-                    "last_login": u.get("lastLogin"),
-                })
+                users.append(
+                    {
+                        "id": u["id"],
+                        "email": u.get("profile", {}).get("email", ""),
+                        "status": u.get("status", "UNKNOWN"),
+                        "last_login": u.get("lastLogin"),
+                    }
+                )
             url = self._next_link(resp.headers.get("link"))
         return users
 
@@ -68,7 +106,8 @@ class OktaConnector(ConnectorBase):
         try:
             resp = httpx.get(
                 f"{self.base_url}/api/v1/users/{user_id}/factors",
-                headers=self.headers, timeout=10,
+                headers=self.headers,
+                timeout=10,
             )
             resp.raise_for_status()
             return [f for f in resp.json() if f.get("status") == "ACTIVE"]

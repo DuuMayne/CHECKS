@@ -2,7 +2,7 @@
 name = "checks"
 version = "0.1.0"
 description = "Portable, config-driven compliance check library. Deterministic pass/fail for security controls with structured evidence output."
-requires-python = ">=3.10"
+requires-python = ">=3.9"
 license = {text = "Apache-2.0"}
 authors = [{name = "Adam Duman"}]
 
@@ -16,6 +16,10 @@ dependencies = [
 dev = [
     "pytest>=8.0",
     "pytest-cov>=5.0",
+    "ruff>=0.8.0",
+    "bandit>=1.7.0",
+    "pip-audit>=2.7.0",
+    "pre-commit>=3.5.0",
 ]
 
 [build-system]
@@ -27,3 +31,40 @@ packages = ["checks"]
 
 [project.scripts]
 checks = "checks.cli:main"
+
+# --- Ruff (linting + formatting) ---
+[tool.ruff]
+target-version = "py39"
+line-length = 120
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "S",    # bandit security rules (via ruff)
+    "B",    # bugbear
+    "UP",   # pyupgrade
+    "RUF",  # ruff-specific rules
+]
+ignore = [
+    "S101",    # allow assert in tests
+    "S105",    # allow hardcoded passwords in mock data
+    "S106",    # allow hardcoded passwords in mock data
+    "E402",    # module-level import not at top (from __future__ compat)
+    "RUF012",  # mutable ClassVar (intentional pattern for connector/evaluator registration)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S"]  # disable security rules in tests
+
+# --- Pytest ---
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--tb=short -q"
+
+# --- Bandit ---
+[tool.bandit]
+exclude_dirs = ["tests", ".venv"]
+skips = ["B101"]  # allow assert

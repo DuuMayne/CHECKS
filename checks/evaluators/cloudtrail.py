@@ -1,6 +1,7 @@
 """CloudTrail evaluator — checks that audit logging is active in all accounts."""
-from .base import EvaluatorBase, evaluator
+
 from ..models import CheckResult, FailingResource, Status
+from .base import EvaluatorBase, evaluator
 
 
 @evaluator
@@ -23,7 +24,9 @@ class CloudTrailEnabledEvaluator(EvaluatorBase):
             FailingResource(
                 resource_type="aws_account",
                 resource_id=a.get("account_id", "unknown"),
-                reason="CloudTrail not actively logging" if a.get("cloudtrail_enabled") else "No CloudTrail trail configured",
+                reason="CloudTrail not actively logging"
+                if a.get("cloudtrail_enabled")
+                else "No CloudTrail trail configured",
                 details={
                     "account_name": a.get("account_name"),
                     "cloudtrail_enabled": a.get("cloudtrail_enabled"),

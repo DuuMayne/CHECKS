@@ -1,6 +1,7 @@
 """S3 encryption evaluator — checks that all buckets have encryption at rest enabled."""
-from .base import EvaluatorBase, evaluator
+
 from ..models import CheckResult, FailingResource, Status
+from .base import EvaluatorBase, evaluator
 
 
 @evaluator

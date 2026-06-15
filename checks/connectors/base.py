@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 """
 Connector base class and registry.
 
@@ -15,7 +16,7 @@ Key design choices:
 
 import os
 from abc import ABC, abstractmethod
-from typing import Any, ClassVar
+from typing import ClassVar
 
 _REGISTRY: dict[str, type[ConnectorBase]] = {}
 
@@ -92,19 +93,14 @@ def get_connector(connector_type: str, force_real: bool = False) -> ConnectorBas
     """
     cls = _REGISTRY.get(connector_type)
     if cls is None:
-        raise ValueError(
-            f"Unknown connector type: '{connector_type}'. "
-            f"Available: {list(_REGISTRY.keys())}"
-        )
+        raise ValueError(f"Unknown connector type: '{connector_type}'. Available: {list(_REGISTRY.keys())}")
 
     if cls.is_configured():
         return cls()
 
     if force_real:
         missing = [v for v in cls.required_env if not os.environ.get(v)]
-        raise ValueError(
-            f"Connector '{connector_type}' requires env vars: {missing}"
-        )
+        raise ValueError(f"Connector '{connector_type}' requires env vars: {missing}")
 
     return MockConnector(cls.mock_data)
 

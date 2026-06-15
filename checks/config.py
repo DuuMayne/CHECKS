@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 """
 Configuration loader — reads check definitions from YAML/JSON files.
 
@@ -44,7 +45,6 @@ Example checks.yml:
 
 import os
 from pathlib import Path
-from typing import Any
 
 import yaml
 
@@ -103,15 +103,11 @@ def load_config(path: str | Path | None = None) -> dict:
 
 def build_catalogs(config: dict) -> tuple[CheckCatalog, RetrievalCatalog]:
     """Build check and retrieval catalogs from loaded config."""
-    check_catalog = CheckCatalog(checks={
-        key: {"key": key, **defn}
-        for key, defn in config.get("checks", {}).items()
-    })
+    check_catalog = CheckCatalog(checks={key: {"key": key, **defn} for key, defn in config.get("checks", {}).items()})
 
-    retrieval_catalog = RetrievalCatalog(retrievals={
-        key: {"key": key, **defn}
-        for key, defn in config.get("retrievals", {}).items()
-    })
+    retrieval_catalog = RetrievalCatalog(
+        retrievals={key: {"key": key, **defn} for key, defn in config.get("retrievals", {}).items()}
+    )
 
     return check_catalog, retrieval_catalog
 

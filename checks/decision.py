@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 """
 Decision engine — routes evidence requests to the cheapest tier.
 
@@ -20,7 +21,6 @@ import re
 from dataclasses import dataclass, field
 
 from .models import RoutingDecision, Tier
-
 
 # Patterns that indicate a Tier 1 (check) question
 CHECK_PATTERNS = [
@@ -55,6 +55,7 @@ AGENT_PATTERNS = [
 @dataclass
 class CheckCatalog:
     """Registry of available check definitions, keyed by check_key."""
+
     checks: dict[str, dict] = field(default_factory=dict)
 
     def find_checks_for(self, systems: list[str], keywords: list[str]) -> list[str]:
@@ -71,12 +72,13 @@ class CheckCatalog:
 @dataclass
 class RetrievalCatalog:
     """Registry of available retrieval definitions."""
+
     retrievals: dict[str, dict] = field(default_factory=dict)
 
     def find_retrievals_for(self, systems: list[str], artifact_type: str | None = None) -> list[dict]:
         """Find retrieval specs relevant to given systems."""
         matches = []
-        for key, spec in self.retrievals.items():
+        for _key, spec in self.retrievals.items():
             if spec.get("system") in systems:
                 if artifact_type is None or spec.get("artifact_type") == artifact_type:
                     matches.append(spec)
@@ -159,8 +161,33 @@ def route(
 def _extract_keywords(text: str) -> list[str]:
     """Extract meaningful keywords for check matching."""
     # Simple keyword extraction — pull out the meaningful terms
-    stopwords = {"is", "are", "do", "does", "have", "has", "the", "a", "an", "all",
-                 "for", "to", "in", "on", "at", "from", "with", "that", "this",
-                 "provide", "evidence", "show", "your", "of", "and", "or"}
+    stopwords = {
+        "is",
+        "are",
+        "do",
+        "does",
+        "have",
+        "has",
+        "the",
+        "a",
+        "an",
+        "all",
+        "for",
+        "to",
+        "in",
+        "on",
+        "at",
+        "from",
+        "with",
+        "that",
+        "this",
+        "provide",
+        "evidence",
+        "show",
+        "your",
+        "of",
+        "and",
+        "or",
+    }
     words = re.findall(r"[a-z_]+", text)
     return [w for w in words if w not in stopwords and len(w) > 2]

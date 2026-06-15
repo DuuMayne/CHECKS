@@ -9,6 +9,7 @@ Examples:
   - "Okta user list with MFA status and last login"
   - "GitHub PRs merged to main in the last 90 days"
 """
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -57,16 +58,10 @@ def get_retrieval(retrieval_type: str) -> RetrievalBase:
     """Get a retrieval instance by type."""
     cls = _REGISTRY.get(retrieval_type)
     if cls is None:
-        raise ValueError(
-            f"Unknown retrieval type: '{retrieval_type}'. "
-            f"Available: {list(_REGISTRY.keys())}"
-        )
+        raise ValueError(f"Unknown retrieval type: '{retrieval_type}'. Available: {list(_REGISTRY.keys())}")
     return cls()
 
 
 def list_retrievals() -> dict[str, dict]:
     """List all registered retrievals."""
-    return {
-        name: {"system": cls.system, "description": cls.description}
-        for name, cls in _REGISTRY.items()
-    }
+    return {name: {"system": cls.system, "description": cls.description} for name, cls in _REGISTRY.items()}

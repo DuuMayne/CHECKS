@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 """
 Check runner — executes a check definition and returns a CheckResult.
 

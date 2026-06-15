@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 """
 Evaluator base class and registry.
 
@@ -61,10 +62,7 @@ def get_evaluator(evaluator_type: str) -> EvaluatorBase:
     """Get an evaluator instance by type."""
     cls = _REGISTRY.get(evaluator_type)
     if cls is None:
-        raise ValueError(
-            f"Unknown evaluator type: '{evaluator_type}'. "
-            f"Available: {list(_REGISTRY.keys())}"
-        )
+        raise ValueError(f"Unknown evaluator type: '{evaluator_type}'. Available: {list(_REGISTRY.keys())}")
     return cls()
 
 

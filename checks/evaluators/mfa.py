@@ -1,6 +1,7 @@
 """MFA enforcement evaluator — checks that all active users have MFA enrolled."""
-from .base import EvaluatorBase, evaluator
+
 from ..models import CheckResult, FailingResource, Status
+from .base import EvaluatorBase, evaluator
 
 
 @evaluator

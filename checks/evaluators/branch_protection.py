@@ -1,6 +1,7 @@
 """Branch protection evaluator — checks that critical repos have protection enabled."""
-from .base import EvaluatorBase, evaluator
+
 from ..models import CheckResult, FailingResource, Status
+from .base import EvaluatorBase, evaluator
 
 
 @evaluator
@@ -19,7 +20,7 @@ class BranchProtectionEvaluator(EvaluatorBase):
 
         # Configurable minimum requirements
         min_reviews = config.get("min_required_reviews", 1)
-        require_status_checks = config.get("require_status_checks", False)
+        config.get("require_status_checks", False)
 
         unprotected = []
         insufficient = []
@@ -37,7 +38,9 @@ class BranchProtectionEvaluator(EvaluatorBase):
             FailingResource(
                 resource_type="repository",
                 resource_id=r["full_name"],
-                reason="No branch protection" if r in unprotected else f"Requires {min_reviews} reviews, has {r.get('branch_protection', {}).get('required_reviews', 0)}",
+                reason="No branch protection"
+                if r in unprotected
+                else f"Requires {min_reviews} reviews, has {r.get('branch_protection', {}).get('required_reviews', 0)}",
                 details={
                     "default_branch": r.get("default_branch"),
                     "branch_protection": r.get("branch_protection"),
@@ -56,8 +59,11 @@ class BranchProtectionEvaluator(EvaluatorBase):
                 {
                     "full_name": r["full_name"],
                     "default_branch": r.get("default_branch"),
-                    "has_protection": r.get("branch_protection") is not None and r.get("branch_protection", {}).get("enabled", False),
-                    "required_reviews": r.get("branch_protection", {}).get("required_reviews", 0) if r.get("branch_protection") else 0,
+                    "has_protection": r.get("branch_protection") is not None
+                    and r.get("branch_protection", {}).get("enabled", False),
+                    "required_reviews": r.get("branch_protection", {}).get("required_reviews", 0)
+                    if r.get("branch_protection")
+                    else 0,
                 }
                 for r in repos
             ],

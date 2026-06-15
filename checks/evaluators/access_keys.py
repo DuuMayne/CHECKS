@@ -1,6 +1,7 @@
 """Access key rotation evaluator — checks that no active keys exceed age threshold."""
-from .base import EvaluatorBase, evaluator
+
 from ..models import CheckResult, FailingResource, Status
+from .base import EvaluatorBase, evaluator
 
 
 @evaluator
@@ -43,8 +44,7 @@ class AccessKeyRotationEvaluator(EvaluatorBase):
             "stale_keys": len(stale),
             "max_key_age_days": max_age,
             "stale_key_details": [
-                {"user": k["user_name"], "key_id": k["access_key_id"], "age_days": k["age_days"]}
-                for k in stale
+                {"user": k["user_name"], "key_id": k["access_key_id"], "age_days": k["age_days"]} for k in stale
             ],
         }
 
