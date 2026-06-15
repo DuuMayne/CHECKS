@@ -1,0 +1,82 @@
+# CHECKS configuration — define what to monitor in your environment.
+#
+# Copy this file to checks.yml and customize for your systems.
+# Each check is: connector (where to get data) + evaluator (how to judge it) + config.
+#
+# No code changes needed — just edit this file and run.
+
+settings:
+  # How often to run checks (for continuous monitoring via OCULUS)
+  default_cadence_seconds: 21600  # 6 hours
+
+checks:
+  # --- Identity & Access ---
+  mfa_enforced:
+    connector: okta
+    evaluator: mfa_enforced
+    config:
+      # Users to exclude from the check (service accounts, break-glass, etc.)
+      exclude_users:
+        - service-bot@company.com
+        - break-glass@company.com
+
+  # --- Source Code Security ---
+  branch_protection:
+    connector: github
+    evaluator: branch_protection
+    config:
+      # Which repos to check (leave empty to check all org repos)
+      critical_repos:
+        - company/api-service
+        - company/frontend
+        - company/infrastructure
+      # Minimum required approvals
+      min_required_reviews: 1
+
+  # --- Cloud Infrastructure ---
+  s3_encryption:
+    connector: aws
+    evaluator: s3_encryption
+    config:
+      # Buckets to skip (temp, scratch, etc.)
+      exclude_buckets:
+        - temp-scratch-data
+      # Only check these (leave empty to check all)
+      # only_buckets: []
+
+  key_rotation:
+    connector: aws
+    evaluator: access_key_rotation
+    config:
+      max_key_age_days: 90
+
+  cloudtrail_logging:
+    connector: aws
+    evaluator: cloudtrail_enabled
+    config:
+      fetch_cloudtrail: true
+      fetch_access_keys: false
+      fetch_s3: false
+
+# Retrievals — known artifact fetches (used by EXHIBIT for audit evidence)
+# These don't have pass/fail — they just get artifacts on demand.
+retrievals:
+  okta_user_list:
+    system: okta
+    artifact_type: user_list
+    description: "Full user list with MFA status and last login"
+
+  github_pr_history:
+    system: github
+    artifact_type: pr_list
+    description: "Pull requests merged in a given period"
+    default_params:
+      period_days: 90
+
+  jira_change_tickets:
+    system: jira
+    artifact_type: ticket_list
+    description: "Change management tickets for a given period"
+    default_params:
+      labels: ["change-management"]
+      period_days: 90
