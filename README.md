@@ -25,17 +25,19 @@ No guessing. No screenshots. No "I think we're compliant." Just a definitive ans
 
 ---
 
-## How It Fits Together
+## Part of the PANOPTICON Suite
 
-CHECKS is one piece of a three-part system:
+CHECKS is one piece of a three-part system for GRC engineers:
 
-| Tool | What it does | When it runs |
-|------|-------------|--------------|
-| **CHECKS** (this) | The check definitions + logic | Shared library — used by both tools below |
-| **OCULUS** | Runs checks automatically every few hours, alerts on Slack when something breaks | Always running in the background |
-| **EXHIBIT** | Packages check results into pretty evidence folders for auditors | When someone asks for evidence |
+| Tool | What it does | Repo |
+|------|-------------|------|
+| **CHECKS** (this) | Shared check library — deterministic pass/fail logic + connectors | The primitive |
+| **[OCULUS](https://github.com/DuuMayne/OCULUS)** | Runs checks continuously, stores results, alerts on drift | The monitor |
+| **[EXHIBIT](https://github.com/DuuMayne/EXHIBIT)** | Packages evidence for auditors — maps frameworks, generates explainers | The audit response |
 
-**You don't need all three.** CHECKS works standalone — you can just run it from your laptop whenever you want to know "how are we doing?"
+**You don't need all three.** CHECKS works standalone — just run `checks run` from your laptop whenever you want to know "how are we doing?" Add OCULUS when you want continuous monitoring. Add EXHIBIT when an auditor shows up.
+
+The system forms a feedback loop: OCULUS monitors → EXHIBIT surfaces gaps → you build new checks → coverage improves → audit costs go down.
 
 ---
 
