@@ -326,4 +326,4 @@ Import it in `checks/connectors/__init__.py` and it's registered.
 
 ## License
 
-Apache 2.0 — use it, modify it, share it.
+Apache 2.0 with Commons Clause — free to use and modify, but the Commons Clause restricts selling the software or offering it as a hosted service. See [LICENSE](LICENSE) for full terms.
