@@ -20,7 +20,7 @@ class BranchProtectionEvaluator(EvaluatorBase):
 
         # Configurable minimum requirements
         min_reviews = config.get("min_required_reviews", 1)
-        config.get("require_status_checks", False)
+        require_status_checks = config.get("require_status_checks", False)
 
         unprotected = []
         insufficient = []
@@ -30,6 +30,8 @@ class BranchProtectionEvaluator(EvaluatorBase):
             if prot is None or not prot.get("enabled"):
                 unprotected.append(repo)
             elif prot.get("required_reviews", 0) < min_reviews:
+                insufficient.append(repo)
+            elif require_status_checks and not prot.get("required_status_checks"):
                 insufficient.append(repo)
 
         non_compliant = unprotected + insufficient
